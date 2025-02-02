@@ -69,7 +69,7 @@ anim = @animate for k=0:0.01:5
     println("k=$k")
 end
 
-gif(anim, "standard_map.gif", fps=5)
+gif(anim, "plots/exercise1_6.gif", fps=5)
 # export GKSwstype=nul
 # https://github.com/JuliaPlots/Plots.jl/issues/3664#issuecomment-887365869
 ## END gif ##

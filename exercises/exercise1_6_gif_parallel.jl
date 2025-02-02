@@ -61,4 +61,8 @@ gif(anim, "plots/exercise1_6_parallel.gif", fps=5)
 #      2         | 55.95s user 1.67s system 153% cpu 37.643 total
 #      4         | 59.04s user 1.67s system 198% cpu 30.645 total
 #      8         | 65.30s user 1.92s system 257% cpu 26.111 total
-##
+#
+## using θs = 0.0:0.01:2π; vs = 0.0:0.01:2π; k=0:0.01:5
+#      with multi-threaded orbits_of_points function
+#      tested on c7g.16xlarge EC2 instance (64 cores)
+#      64 threads: 3m22.822s

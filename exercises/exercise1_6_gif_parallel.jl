@@ -38,7 +38,7 @@ anim = @animate for k=0:0.01:5
 	heatmap(
 		θs, vs, reshape(orbits, length(θs), length(vs))', 
 		c=cgrad(:default, [0.01, 0.02, 0.03, 0.1, 0.2, 0.3, 1.0]),
-		title="Orbits of Standard Map for k=$k",
+		title="Orbits of Standard Map for k=$k"
 		xguide="v",
 		yguide="θ"
 	)

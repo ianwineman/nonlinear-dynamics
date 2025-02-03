@@ -38,7 +38,8 @@ p2 = plot(
 	title="Hamiltonian of Single pendulum",
 	label=hcat(["(θ₀,v₀) = $(Tuple(sol.prob.u0))" for sol=sols]...),
 	c=[:red :blue :orange],
-	linewidth=2
+	linewidth=2,
+	legend=:bottomright
 )
 
 plot(p1,p2, layout=(2,1))

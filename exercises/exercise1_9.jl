@@ -83,7 +83,7 @@ p2 = scatter(
 	c=:red,
 	markerstrokewidth=0,
 	markersize=2,
-	label="z=25.0",
+	label="z=50",
 	legendposition=:topleft
 )
 

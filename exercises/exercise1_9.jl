@@ -1,5 +1,14 @@
 using DifferentialEquations
 using Plots
+using LinearAlgebra
+
+struct Plane
+	p1::Vector{Float64}
+	p2::Vector{Float64}
+	p3::Vector{Float64}
+	normal::Vector{Float64}
+	equation::Function 
+end
 
 function lorenz63!(du, u, p, t)
 	σ, ρ, β = p
@@ -10,10 +19,29 @@ function lorenz63!(du, u, p, t)
     du[3] = x * y - β * z
 end
 
-function plane(x, y; a=1, b=1, c=1, d=1)
-	z = 30 - x
+function plane(p1, p2, p3)::Plane
+	v1 = p3 .- p1
+	v2 = p3 .- p2
+	normal = cross(v1,v2)
+	normal = normal ./ gcd(normal...)
+	a, b, c = normal
+	d = -dot(normal,p1)
+	f(x,y) = (-d -a*x -b*y)/c
+	Plane(p1, p2, p3, normal, f)
 end
 
+function distance_from_plane(p,plane::Plane)
+	v = plane.p1 .- p
+	n = plane.normal
+	proj = dot(v,n)/(norm(n)^2) .* n
+	norm(proj)
+end
+
+p1 = [30,-30,0]
+p2 = [30,30,0]
+p3 = [-30,0,50]
+prob_plane = plane(p1,p2,p3) 
+plane_f = prob_plane.equation
 
 u0 = [2.0,1.0,1.0]
 tspan = (0.0,500.0)
@@ -36,7 +64,7 @@ x = -30:1:30
 y = -30:1:30
 X = [i for i in x, j in y]
 Y = [j for i in x, j in y]
-Z = 30 .- X
+Z = plane_f.(X,Y)
 
 scatter!(
 	X, Y, Z,
@@ -48,8 +76,8 @@ scatter!(
 )
 
 p2 = scatter(
-	[u[1] for u=sol.u if isapprox(u[3],25.0,atol=0.1)],
-	[u[2] for u=sol.u if isapprox(u[3],25.0,atol=0.1)],
+	[u[1] for u=sol.u if isapprox(distance_from_plane(u,prob_plane),0.0,atol=0.1)],
+	[u[2] for u=sol.u if isapprox(distance_from_plane(u,prob_plane),0.0,atol=0.1)],
 	xlim=[-30,30], ylim=[-30,30],
 	xticks=[-30,0,30], yticks=[-30,0,30],
 	xlabel="x", ylabel="y",

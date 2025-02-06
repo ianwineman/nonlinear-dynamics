@@ -23,7 +23,6 @@ function plane(p1, p2, p3)::Plane
 	v1 = p3 .- p1
 	v2 = p3 .- p2
 	normal = cross(v1,v2)
-	normal = normal ./ gcd(normal...)
 	a, b, c = normal
 	d = -dot(normal,p1)
 	f(x,y) = (-d -a*x -b*y)/c

@@ -24,7 +24,7 @@ p1 = plot(
 	ylabel="θ",
 	xlim=[0,3],
 	ylim=[0,40],
-	title="System: \$\\dot v = \\sin θ, \\dot θ=(v^2 - \\cos θ)/v\$",
+	title="System: \$\\dot v = -\\sin θ, \\dot θ=(v^2 - \\cos θ)/v\$",
 	label=hcat(["(v₀,θ₀) = $(Tuple(sol.prob.u0))" for sol=sols]...),
 	c=[:red :blue :orange],
 	linewidth=2,

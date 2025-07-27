@@ -7,11 +7,11 @@ function lotka_volterra!(du, u, p, t)
    du[2] = γ*x*y - δ*y
 end
 
-α, β, γ, δ = 1.1, 0.4, 0.4, 0.1
+α, β, γ, δ = 1.1, 0.4, 0.1, 0.4
 sols = []
 
 for y0 in [1.0, 2.0, 5.0, 7.0, 10.0, 12.0, 15.0]
-   prob = ODEProblem(lotka_volterra!, [1.0,y0], (0.0,100.0), [α, β, γ, δ])
+   prob = ODEProblem(lotka_volterra!, [10.0,y0], (0.0,50.0), [α, β, γ, δ])
    sol = solve(prob, dtmax=0.01)
    push!(sols, sol)
 end

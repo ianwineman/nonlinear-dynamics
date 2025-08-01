@@ -45,4 +45,4 @@ scatter!(
 	cbar_title="\$ϕ\$"
 )
 
-savefig("plots/fig2_3.png")
+savefig("plots/figure2_3.png")

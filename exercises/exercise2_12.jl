@@ -23,4 +23,4 @@ plot(
 	linecolor=:cornflowerblue,
 	plot_title="Normalized power spectra"
 )
-savefig("plots/figure2_12.png")
+savefig("plots/exercise2_12.png")

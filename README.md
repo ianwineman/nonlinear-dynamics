@@ -4,7 +4,7 @@
 ## Figure 2.6
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/figure2_6.jl)
 
-![Figure 2.6](plots/exercise2_6.png)
+![Figure 2.6](plots/figure2_6.png)
 
 ## Exercise 2.8
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/exercise2_8.jl)

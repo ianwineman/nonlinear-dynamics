@@ -40,8 +40,8 @@ end
 plot(
 	1:201, log.(δis),
 	title="Largest Lyapunov Exponent",
-	xlabel="t", ylabel="δ(t)",
-	label="δ(t)",
+	xlabel="t",
+	label="ln(δ(t))",
 	linecolor=:deepskyblue
 )
 plot!(

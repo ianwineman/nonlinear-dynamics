@@ -9,35 +9,28 @@ function lorenz63!(du, u, p, t)
     du[3] = x * y - β * z
 end
 
-function lyapunov(ds, u0, p, δ0, Δt, N)
-	tis = Δt:Δt:(N*Δt)
+function lyapunov(ds, u0, p, Δt, N, δ0)
+	xrefr_prob = ODEProblem(ds, u0,            (0.0, Δt*N), p)
+	xtest_prob = ODEProblem(ds, u0 .+ (δ0/√3), (0.0, Δt*N), p)
 
-	xref_prob = ODEProblem(ds, u0, (0.0,N*Δt), p)
-	xref_sol = solve(xref_prob, tstops=tis)
+	xrefr_int = init(xrefr_prob, Tsit5())
+	xtest_int = init(xtest_prob, Tsit5())
 
-	xref_tstops_i = [findfirst(x->x==ti, xref_sol.t) for ti in Δt:Δt:N*Δt]
-	xrefs = getindex(xref_sol.u, xref_tstops_i)
+	δi = []
 
-	xtest_prob = ODEProblem(ds, u0 .+ δ0, (0.0,Δt), p)
-	integrator = init(xtest_prob, Tsit5())
-
-	for i=1:N
-		solve!(integrator)
-		reinit!(integrator, xrefs[i] .+ δ0; erase_sol=false, t0=i*Δt, tf=(i+1.0)*Δt)
+	for _ in 1:N
+		step!(xrefr_int, Δt, true)
+		step!(xtest_int, Δt, true)
+		push!(δi, norm(xrefr_int.u .- xtest_int.u))
+		reinit!(xtest_int, xrefr_int.u .+ (xtest_int.u .- xrefr_int.u) .* (δ0/δi[end]))
 	end
 
-	xtest_sol = integrator.sol
-	xtest_tstops_i = [findfirst(x->x==ti, xtest_sol.t) for ti in Δt:Δt:N*Δt]
-	xtests = getindex(xtest_sol.u, xtest_tstops_i)
-
-	δis = norm.(xrefs .- xtests)
-
-	return sum(log.(δis ./ δ0)) / (N * Δt)
+	λ1 = (1/(N*Δt)) * sum(log.(δi ./ δ0))
 end
 
 u0 = [20.0, 20.0, 20.0]
-p = [10.0, 28.0, 8/3]
-λ1 = lyapunov(lorenz63!, u0, p, 0.000001, 1.0, 45)
+p  = [10.0, 28.0, 8/3]
+λ1 = lyapunov(lorenz63!, u0, p, 5.0, 1_000, 0.01)
 
 prob1 = ODEProblem(lorenz63!, u0, (0.0,45.0), p)
 sol1 = solve(prob1)
@@ -55,8 +48,8 @@ plot(
 	linecolor=:deepskyblue
 )
 plot!(
-	4:19, 0.91 .* collect(0:15) .- 13,
+	4:18, λ1 .* collect(0:14) .- 13,
 	label="λ1=$(round(λ1, digits=2))", 
 	linecolor=:mediumpurple
 )
-
+savefig("plots/exercise3_2.png")

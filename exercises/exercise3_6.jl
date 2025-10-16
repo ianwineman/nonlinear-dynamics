@@ -44,11 +44,11 @@ function lyapunovspectrum(ds::ContinuousDynamicalSystem, N::Float64, Δt::Float6
 	D = length(ds.u)
 	if k > D error("k > D not allowed.") end
 	Xprob = ODEProblem(ds.rule_de, ds.u, (0.0, Δt*N), ds.p)
-	Xsol = solve(Xprob, tstops=Δt:Δt:Δt*N)
+	Xint = init(Xprob)
 
 	function Y_evolution(du, u, p, t)
 		Y = reshape(u, (D,k))
-		J = ForwardDiff.jacobian(ds.rule, Xsol(t))
+		J = ForwardDiff.jacobian(ds.rule, Xint.u)
 		Ẏ = vec(J * Y)
 		for i=1:length(du)
 			du[i] = Ẏ[i]
@@ -60,6 +60,7 @@ function lyapunovspectrum(ds::ContinuousDynamicalSystem, N::Float64, Δt::Float6
 
 	λ = zeros(k)
 	for _ in 1:N
+		step!(Xint, Δt, true)
 		step!(Yint, Δt, true)
 		Y = reshape(Yint.u, (D,k))
 		Q, R = qr(Y)
@@ -91,7 +92,6 @@ end
 lo = ContinuousDynamicalSystem(lorenz63_rule, lorenz63_rule_de!, [20.0, 20.0, 20.0], [10.0, 28.0, 8/3])
 ls = lyapunovspectrum(lo, 1_000.0, 1.0, 3)
 
-#=
 λs = []
 for ρ=20:100
 	function lorenz63_rule(u)
@@ -124,4 +124,3 @@ plot(
 # sum({λ_i}) < 0 since Lorenz63 system is dissipative
 # should have λ_i = 0 for some i...
 savefig("plots/exercise3_6.png")
-=#

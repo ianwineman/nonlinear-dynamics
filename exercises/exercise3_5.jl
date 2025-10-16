@@ -44,33 +44,34 @@ function lyapunovspectrum(ds::ContinuousDynamicalSystem, N::Float64, Δt::Float6
 	D = length(ds.u)
 	if k > D error("k > D not allowed.") end
 	Xprob = ODEProblem(ds.rule_de, ds.u, (0.0, Δt*N), ds.p)
-	Xsol = solve(Xprob, tstops=Δt:Δt:Δt*N)
-	#Xt = [Xsol(i) for i in Δt:Δt:Δt*N]
-	#JfXt = [ForwardDiff.jacobian(ds.rule, x) for x in Xt]
+	Xint = init(Xprob)
 
 	function Y_evolution(du, u, p, t)
 		Y = reshape(u, (D,k))
-		J = ForwardDiff.jacobian(ds.rule, Xsol(t))
-		Ẏ = J * Y
+		J = ForwardDiff.jacobian(ds.rule, Xint.u)
+		Ẏ = vec(J * Y)
 		for i=1:length(du)
-			du[i] = vec(Ẏ)[i]
+			du[i] = Ẏ[i]
 		end
 	end
+
 	Yprob = ODEProblem(Y_evolution, vec(Matrix{Float64}(I, D, k)), (0.0, Δt*N))
 	Yint = init(Yprob)
-	Riis = Vector{Vector{Float64}}()
+
+	λ = zeros(k)
 	for _ in 1:N
+		step!(Xint, Δt, true)
 		step!(Yint, Δt, true)
 		Y = reshape(Yint.u, (D,k))
 		Q, R = qr(Y)
 		Q = Matrix(Q)
-		push!(Riis, log.(abs.(diag(R))))
+		λ .+= log.(abs.(diag(R)))
 		reinit!(Yint, vec(Q))
 	end
-	λs = [(1/(N*Δt))*sum([R[n] for R in Riis]) for n in 1:k]
+	λ ./= (Δt*N)
+	return λ
 end
 
-#=
 function lorenz63_rule(u)
 	x, y, z = u
 	σ, ρ, β = [10.0, 28.0, 8/3]
@@ -89,7 +90,6 @@ function lorenz63_rule_de!(du, u, p, t)
 end
 lo = ContinuousDynamicalSystem(lorenz63_rule, lorenz63_rule_de!, [20.0, 20.0, 20.0], [10.0, 28.0, 8/3])
 ls = lyapunovspectrum(lo, 1_000.0, 1.0, 3)
-=#
 
 λs = []
 for ρ=20:100

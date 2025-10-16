@@ -13,7 +13,7 @@ mutable struct ContinuousDynamicalSystem <: DynamicalSystem
 end
 
 function lyapunovspectrum(ds::DiscreteDynamicalSystem, N::Int64, Δt::Int64, k::Int64)
-	# N = 10_000, Δt = 5, Δt << N & Δt | N
+	# N = 10_000, Δt = 5, Δt << N & Δt | N, T = N
 	D = length(ds.u)
 	if k > D error("k > D not allowed.") end
 	Xs = [ds.u]

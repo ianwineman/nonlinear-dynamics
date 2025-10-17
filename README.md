@@ -4,7 +4,9 @@
 ## Exercise 3.13
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/exercise3_13.jl)
 
-![Exercise 3.13](plots/exercise3_13.png)
+![Exercise 3.13](plots/exercise3_13_1.png)
+![Exercise 3.13](plots/exercise3_13_2.png)
+![Exercise 3.13](plots/exercise3_13_3.png)
 
 ## Exercise 3.7
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/exercise3_7.jl)

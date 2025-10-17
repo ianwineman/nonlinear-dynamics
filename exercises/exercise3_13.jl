@@ -35,7 +35,7 @@ let u0 = [20.0, 20.0, 20.0], p  = [10.0, 28.0, 8/3]
 		xlabel="Iterations, \$N\$", ylabel="\$λ_1\$",
 		label="\$λ_1(N)\$",
 		linecolor=:orange,
-		title="Converagance of \$λ_1\$"
+		title="Convergence of \$λ_1\$"
 	)
 	scatter!(
 		[length(λN)], [λN[end]], 
@@ -58,7 +58,7 @@ let Δts = [0.1, 0.5, 1.0, 5.0, 10.0]
 		hcat(λNs...),
 		label=hcat(["\$ Δt = $Δt\$" for Δt in Δts]...),
 		xlabel="Iterations, \$N\$", ylabel="\$λ_1\$", 
-		title="Converagance of \$λ_1\$"
+		title="Convergence of \$λ_1\$"
 	)
 	scatter!(
 		[length(λNs[3])], [λNs[3][end]], 
@@ -81,7 +81,7 @@ let δ0s = [0.01, 0.05, 0.1, 1.0, 5.0]
 		hcat(λNs...),
 		label=hcat(["\$ δ_0 = $δ0\$" for δ0 in δ0s]...),
 		xlabel="Iterations, \$N\$", ylabel="\$λ_1\$", 
-		title="Converagance of \$λ_1\$"
+		title="Convergence of \$λ_1\$"
 	)
 	scatter!(
 		[length(λNs[3])], [λNs[3][end]], 

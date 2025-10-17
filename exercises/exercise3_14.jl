@@ -80,7 +80,7 @@ let u0 = [20.0, 20.0, 20.0], p  = [10.0, 28.0, 8/3]
 			"\$λ_3 = $(round(lsN[end][3], digits=4))\$",
 		),
 		linecolor=[:red :orange :blue],
-		title="Converagance of Lyapunov Spectrum"
+		title="Convergence of Lyapunov Spectrum"
 	)
 	scatter!(
 		[length(lsN), length(lsN), length(lsN)], [lsN[end][1], lsN[end][2], lsN[end][3]], 
@@ -137,7 +137,7 @@ let Δts = [0.1, 0.5, 1.0, 1.5, 1.9]
 			[1.0/(i^2) for i in 1:length(Δts)]..., 
 			[1.0/(i^2) for i in 1:length(Δts)]...
 		),
-		title="Converagance of Lyapunov Spectrum",
+		title="Convergence of Lyapunov Spectrum",
 		legendposition=:outertopright,
 		legendtitle="\$Δt∈$Δts\$"
 	)

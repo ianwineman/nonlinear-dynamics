@@ -24,7 +24,7 @@ function lyapunov_convergance(ds, u0, p, Δt, N, δ0)
 		reinit!(xtest_int, xrefr_int.u .+ (xtest_int.u .- xrefr_int.u) .* (δ0/δ[i]))
 	end
 
-	λN = [sum(log.(δ[1:i] ./ δ0))/(N*Δt) for i in 1:length(δ)]
+	λN = [sum(log.(δ[1:i] ./ δ0))/(i*Δt) for i in 1:length(δ)]
 end
 
 let u0 = [20.0, 20.0, 20.0], p  = [10.0, 28.0, 8/3]

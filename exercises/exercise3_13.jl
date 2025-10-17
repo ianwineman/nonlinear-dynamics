@@ -1,4 +1,4 @@
-using LinearAlgebra, DifferentialEquations
+using LinearAlgebra, DifferentialEquations, Plots
 
 function lorenz63!(du, u, p, t)
 	σ, ρ, β = p
@@ -24,10 +24,23 @@ function lyapunov(ds, u0, p, Δt, N, δ0)
 		reinit!(xtest_int, xrefr_int.u .+ (xtest_int.u .- xrefr_int.u) .* (δ0/δ[i]))
 	end
 
-	λ = sum(log.(δ ./ δ0))
-	λ /= (N*Δt)
+	λN = [sum(log.(δ[1:i] ./ δ0))/(N*Δt) for i in 1:length(δ)]
 end
 
 u0 = [20.0, 20.0, 20.0]
 p  = [10.0, 28.0, 8/3]
-λ1 = lyapunov(lorenz63!, u0, p, 1.0, 1_000, 0.1)
+λN = lyapunov(lorenz63!, u0, p, 1.0, 1_000, 0.1)
+
+plot(
+	1:length(λN), λN,
+	xlabel="Iterations, \$N\$", ylabel="\$λ_1\$",
+	label="\$λ_1(N)\$",
+	linecolor=:orange,
+	title="Converagance of \$λ_1\$"
+)
+scatter!(
+	[length(λN)], [λN[end]], 
+	label="\$λ_1 = $(round(λN[end], digits=4))\$",
+	markercolor=:red
+)
+savefig("plots/exercise3_13.png")

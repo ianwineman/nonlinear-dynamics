@@ -1,4 +1,4 @@
-using LinearAlgebra, DifferentialEquations, Plots
+using LinearAlgebra, DifferentialEquations
 
 function lorenz63!(du, u, p, t)
 	σ, ρ, β = p
@@ -23,7 +23,7 @@ function lyapunov(ds, u0, p, Δt, N, δ0)
 		δ[i] += norm(xrefr_int.u .- xtest_int.u)
 		reinit!(xtest_int, xrefr_int.u .+ (xtest_int.u .- xrefr_int.u) .* (δ0/δ[i]))
 	end
-	
+
 	λ = sum(log.(δ ./ δ0))
 	λ /= (N*Δt)
 end

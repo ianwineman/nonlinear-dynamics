@@ -90,7 +90,7 @@ let u0 = [20.0, 20.0, 20.0], p  = [10.0, 28.0, 8/3]
 	savefig("plots/exercise3_14_1.png")
 end
 
-let Δts = [0.1, 0.5, 1.0, 5.0, 10.0]
+let Δts = [0.1, 0.5, 1.0, 1.5, 1.9]
 	function lorenz63_rule(u)
 		x, y, z = u
 		σ, ρ, β = [10.0, 28.0, 8/3]
@@ -127,7 +127,16 @@ let Δts = [0.1, 0.5, 1.0, 5.0, 10.0]
 		),
 		xlabel="Iterations, \$N\$", ylabel="\$λ\$", 
 		label=false,
-		#linecolor=[reds(n), oragnes(n), blues(n)],
+		linecolor=hcat(
+			[:red    for _ in 1:length(Δts)]..., 
+			[:orange for _ in 1:length(Δts)]..., 
+			[:blue   for _ in 1:length(Δts)]...
+		),
+		linealpha=hcat(
+			[1.0/(i^2) for i in 1:length(Δts)]..., 
+			[1.0/(i^2) for i in 1:length(Δts)]..., 
+			[1.0/(i^2) for i in 1:length(Δts)]...
+		),
 		title="Converagance of Lyapunov Spectrum",
 		legendposition=:outertopright,
 		legendtitle="\$Δt∈$Δts\$"

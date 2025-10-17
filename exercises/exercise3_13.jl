@@ -9,7 +9,7 @@ function lorenz63!(du, u, p, t)
     du[3] = x * y - β * z
 end
 
-function lyapunov(ds, u0, p, Δt, N, δ0)
+function lyapunov_convergance(ds, u0, p, Δt, N, δ0)
 	xrefr_prob = ODEProblem(ds, u0,                          (0.0, N*Δt), p)
 	xtest_prob = ODEProblem(ds, u0 .+ (δ0/sqrt(length(u0))), (0.0, N*Δt), p)
 
@@ -28,7 +28,7 @@ function lyapunov(ds, u0, p, Δt, N, δ0)
 end
 
 let u0 = [20.0, 20.0, 20.0], p  = [10.0, 28.0, 8/3]
-	λN = lyapunov(lorenz63!, u0, p, 1.0, 1_000, 0.1)
+	λN = lyapunov_convergance(lorenz63!, u0, p, 1.0, 1_000, 0.1)
 
 	plot(
 		1:length(λN), λN,
@@ -50,7 +50,7 @@ let Δts = [0.1, 0.5, 1.0, 5.0, 10.0]
 	for Δt in Δts
 		u0 = [20.0, 20.0, 20.0]
 		p  = [10.0, 28.0, 8/3]
-		λN = lyapunov(lorenz63!, u0, p, Δt, 1_000, 0.1)
+		λN = lyapunov_convergance(lorenz63!, u0, p, Δt, 1_000, 0.1)
 		push!(λNs, λN)
 	end
 	plot(
@@ -73,7 +73,7 @@ let δ0s = [0.01, 0.05, 0.1, 1.0, 5.0]
 	for δ0 in δ0s
 		u0 = [20.0, 20.0, 20.0]
 		p  = [10.0, 28.0, 8/3]
-		λN = lyapunov(lorenz63!, u0, p, 1.0, 1_000, δ0)
+		λN = lyapunov_convergance(lorenz63!, u0, p, 1.0, 1_000, δ0)
 		push!(λNs, λN)
 	end
 	plot(

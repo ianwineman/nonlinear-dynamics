@@ -1,6 +1,12 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Exercise 3.14
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/exercise3_14.jl)
+
+![Exercise 3.14](plots/exercise3_14_1.png)
+![Exercise 3.14](plots/exercise3_14_2.png)
+
 ## Exercise 3.13
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/exercise3_13.jl)
 

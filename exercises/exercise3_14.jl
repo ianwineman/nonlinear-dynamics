@@ -1,4 +1,4 @@
-using DifferentialEquations, ForwardDiff, LinearAlgebra
+using DifferentialEquations, ForwardDiff, LinearAlgebra, Plots
 
 abstract type DynamicalSystem end
 

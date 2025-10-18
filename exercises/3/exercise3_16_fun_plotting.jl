@@ -20,7 +20,7 @@ function lyapunov(ds, u0, p, Δt, N, δ0)
 	λ = (1/(N*Δt)) * sum(log.(δ ./ δ0))
 end
 
-let u0s = PredefinedDynamicalSystems.henonheiles_ics(0.13, 20), T = 1_250.0, Δt = 1.0, pc_ϵ=0.1
+let u0s = PredefinedDynamicalSystems.henonheiles_ics(0.13, 24), T = 1_250.0, Δt = 1.0, pc_ϵ=0.1
 	poincare_section = Vector{Tuple{Vector{Float64}, Float64}}()
 
 	function henon_heiles_rule(u)
@@ -53,19 +53,34 @@ let u0s = PredefinedDynamicalSystems.henonheiles_ics(0.13, 20), T = 1_250.0, Δt
 		push!(poincare_section, [(p,λ1) for p in points]...)
 	end
 
-	scatter(
-		[p[1][2] for p in poincare_section], 
-		[p[1][4] for p in poincare_section],
-		marker_z=[p[2] for p in poincare_section],
-		markerstrokewidth=0.0,
-		markersize=0.75,
-		mc=:blues,
-		cbar_title="\$λ_1\$",
-		label=false,
-		xlabel="\$y\$", ylabel="\$v_y\$",
-		title="Poincaré section of Hénon–Heiles system",
-		backgroundinside=:linen,
-		grid=false
-	)
+	marker_colors = [
+		:spring,
+	    :imola,
+	    :Purples,
+	    :Greens,
+	    :inferno,
+	    :winter,
+	    :nuuk,
+	    :lipari
+	]
+	for color in marker_colors
+		scatter(
+			[p[1][4] for p in poincare_section], 
+			[p[1][2] for p in poincare_section],
+			marker_z=[p[2] for p in poincare_section],
+			markerstrokewidth=0.0,
+			markersize=2,
+			mc=color,
+			label=false,
+			backgroundinside=:black,
+			backgroundoutside=:black,
+			grid=false,
+			xtick=false,
+			ytick=false,
+			cbar=false,
+			ratio=:equal,
+			size=(1179,2556)
+		)
+		savefig("plots/fun/exercise3_16_fun_$(color).png")
+	end
 end
-savefig("plots/exercise3_16.png")

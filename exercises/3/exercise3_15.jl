@@ -85,7 +85,7 @@ let u0s = PredefinedDynamicalSystems.henonheiles_ics(0.13, 15), T = 1_250.0, Δt
 		prob = ODEProblem(henon_heiles_rule_de!, u0, (0.0,T))
 		sol  = solve(prob)
 		
-		fa = findall(x->(abs(x[1])<=pc_ϵ), sol.u)
+		fa = findall(x->((abs(x[1])<=pc_ϵ) && (x[3]>=0.0)), sol.u)
 		points = sol.u[fa]
 
 		push!(poincare_section, [(p,llsct) for p in points]...)

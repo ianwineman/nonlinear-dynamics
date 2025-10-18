@@ -6,15 +6,6 @@
 
 ![Exercise 3.16](plots/exercise3_16.png)
 
-![Exercise 3.16](plots/fun/exercise3_16_fun_Greens.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_imola.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_inferno.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_lipari.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_nuuk.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_Purples.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_spring.png)
-![Exercise 3.16](plots/fun/exercise3_16_fun_winter.png)
-
 ## Exercise 3.15
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/3/exercise3_15.jl)
 

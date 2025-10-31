@@ -49,7 +49,7 @@ function continuation(f, zm1, zm0, N, J_inv; p=[])
 end
 
 let
-	anim = @animate for ϵ in vcat(collect(0.0:0.01:0.5), collect(0.49:-0.01:-0.5))
+	anim = @animate for ϵ in vcat([0.0 for _ in 1:9], collect(0.0:0.01:0.5), collect(0.49:-0.01:0.0), [0.0 for _ in 1:8], collect(0.0:-0.01:-0.5))
 		println("ϵ=$ϵ")
 		stable_fixed_points = []
 		unstable_fixed_points = []

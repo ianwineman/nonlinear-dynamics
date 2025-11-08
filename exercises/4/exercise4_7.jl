@@ -47,4 +47,4 @@ scatter(
 	title="Hénon map"
 )
 scatter!((chaotic_attractor[1], chaotic_attractor[2]), label="Chaotic attractor", mc=:black)
-#savefig("plots/exercise4_7.png")
+savefig("plots/exercise4_7.png")

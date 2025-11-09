@@ -3,7 +3,7 @@ using Plots; ENV["GKSwstype"] = "100"
 function orbit(map, x0, N; p=[2.75])
 	xs = [x0]
 	for _ in 2:N
-		push!(xs, logistic_map(xs[end]; p=p))
+		push!(xs, map(xs[end]; p=p))
 	end
 	return xs
 end

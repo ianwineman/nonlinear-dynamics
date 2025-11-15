@@ -1,33 +1,26 @@
-using Plots
+using Plots, Base.Threads
 
 function orbit(map, x0, N; p=[2.75])
-	xs = [x0]
-	for _ in 2:N
-		push!(xs, map(xs[end]; p=p))
+	xs = zeros(N)
+	xs[1] = x0
+	for i in 2:N
+		xs[i] = map(xs[i-1]; p=p)
 	end
 	return xs
 end
 
-function orbit_diagram(map, x0, prange; N=10, t=6, k=1)
-	points = []
-	for p in prange
-		orbitp = orbit(map, x0, N; p=[p])[t:end]
-		period = unique(x->round(x,digits=k), orbitp)
-		for point in period
-			push!(points, (p, point))
-		end
-	end
-	return first.(points), last.(points)
-end
-
 function orbit_periods(map, x0, prange; N=10, t=6, k=1)
-	periods = []
-	for p in prange
+	ps      = collect(prange)
+	rs      = zeros(length(prange))
+	periods = zeros(Int, length(prange))
+	@threads for i in 1:length(ps)
+		p = ps[i]
 		orbitp = orbit(map, x0, N; p=[p])[t:end]
 		period = unique(x->round(x,digits=k), orbitp)
-		push!(periods, (p,length(period)))
+		rs[i] = p
+		periods[i] = length(period)
 	end
-	return periods
+	return collect(zip(rs,periods))
 end
 
 function bifurcations(orb_periods)
@@ -47,7 +40,6 @@ function logistic_map(x; p=[2.75])
 	return r * x * (1 - x)
 end
 
-#orbit_diagram(logistic_map, 0.4, 2.5:0.0001:3.6; N=10_000, t=1_000, k=3)
-#orbit_periods(logistic_map, 0.4, 2.5:0.0001:3.6; N=10_000, t=1_000, k=3)
-
-#sort(unique(last.(orbit_periods(logistic_map, 0.4, 2.5:0.0001:4.0; N=10_000, t=1_000, k=3))))
+ops = orbit_periods(logistic_map, BigFloat(0.4), 2.99:0.000001:3.6; N=100_000, t=99_800, k=6)
+b   = bifurcations(ops)
+println("δ ≈ $(round((b[end-1]-b[end-2])/(b[end]-b[end-1]), digits=4))")

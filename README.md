@@ -1,6 +1,12 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Figure 5.4
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/figure5_4.jl)
+
+![Figure 5.4](plots/magnetic_pendulum.png)
+
+
 ## Exercise 4.18
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/4/exercise4_18.jl)
 

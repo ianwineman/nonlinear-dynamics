@@ -21,8 +21,6 @@ function trajectory(f, x0, N)
 	return t
 end
 
-
-
 let 
 	setprecision(BigFloat, 10_000)
 	x0 = BigFloat(π)/4

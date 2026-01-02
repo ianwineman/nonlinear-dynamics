@@ -75,7 +75,7 @@ anim = @animate for i in 1:length(dims)
 		yaxis=false,
 		xtick=false,
 		ytick=false,
-		label="Step $(i-1), \$Δ^{(H)} ≈ $(round(dims[i]; digits=2))\$",
+		label="Step $(i-1), \$Δ^{(C)} ≈ $(round(dims[i]; digits=2))\$",
 		title="Koch snowflake",
 		legendposition=:inside,
 		foregroundcolorlegend = nothing

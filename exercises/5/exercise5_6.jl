@@ -74,7 +74,7 @@ plot(
 	yaxis=false,
 	xtick=false,
 	ytick=false,
-	label="Step $(display_step), \$Δ^{(H)} ≈ $(round(dims[display_step+1]; digits=2))\$",
+	label="Step $(display_step), \$Δ^{(C)} ≈ $(round(dims[display_step+1]; digits=2))\$",
 	title="Koch snowflake",
 	legendposition=:inside,
 	foregroundcolorlegend = nothing

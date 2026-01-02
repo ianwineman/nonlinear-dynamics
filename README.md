@@ -5,6 +5,7 @@
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/5/exercise5_6.jl)
 
 ![Exercise 5.6](plots/exercise5_6.png)
+![Exercise 5.6](plots/exercise5_6.gif)
 
 
 ## Exercise 5.4

@@ -13,11 +13,6 @@ function correlation_sum(X, ϵ, w)
 	return (2*C)/((N - w)*(N - w - 1))
 end
 
-function correlation_dimension(X, ϵ, w)
-	CS = correlation_sum(X, ϵ, w)
-	return log(CS)/log(ϵ)
-end
-
 function standard_map(θ, v; k=1.0)
 	return mod.([θ + v + k*sin(θ), v + k*sin(θ)], 2π)
 end
@@ -49,7 +44,6 @@ end
 Cs = [correlation_sum(traj, ϵ, 3) for ϵ in ϵs]
 
 n = findfirst(x->!isinf(x) && !isnan(x), log.(Cs))
-dim = correlation_dimension(traj, exp(-3), 3)
 plot(
 	log.(ϵs)[n:end], 
 	log.(Cs)[n:end],
@@ -63,18 +57,13 @@ plot(
 )
 
 xstart, xend = -4.0, -1.0
+dim = (log.(Cs)[findfirst(x->x==xend, -10.0:0.1:3.0)] - log.(Cs)[findfirst(x->x==xstart, -10.0:0.1:3.0)])/(xend - xstart)
 plot!(
 	range(xstart,xend; length=100),
-	range(xstart,xend; length=100) .* (log.(Cs)[findfirst(x->x==xend, -10.0:0.1:3.0)] - log.(Cs)[findfirst(x->x==xstart, -10.0:0.1:3.0)])/(xend - xstart) .+ log.(Cs)[findfirst(x->x==0.0, -10.0:0.1:3.0)],
-	label=false,
-	lc=:orange,
+	range(xstart,xend; length=100) .* dim .+ log.(Cs)[findfirst(x->x==0.0, -10.0:0.1:3.0)],
+	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$",
+	lc=:purple,
 	lw=2
-)
-scatter!(
-	[log(exp(-3))], 
-	[log(Cs[findfirst(x->x==-3, -10.0:0.1:3.0)])], 
-	mc=:red, 
-	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$"
 )
 savefig("plots/exercise5_7_sm.png")
 
@@ -88,7 +77,6 @@ solv = solve(prob)
 Cs = [correlation_sum(solv.u, ϵ, 3) for ϵ in ϵs]
 
 n = findfirst(x->!isinf(x) && !isnan(x), log.(Cs))
-dim = correlation_dimension(solv.u, exp(-3), 3)
 plot(
 	log.(ϵs)[n:end], 
 	log.(Cs)[n:end],
@@ -102,18 +90,13 @@ plot(
 )
 
 xstart, xend = -3.5, 2.0
+dim = (log.(Cs)[findfirst(x->x==xend, -20.0:0.1:5.0)] - log.(Cs)[findfirst(x->x==xstart, -20.0:0.1:5.0)])/(xend - xstart)
 plot!(
 	range(xstart,xend; length=100),
-	range(xstart,xend; length=100) .* (log.(Cs)[findfirst(x->x==xend, -20.0:0.1:5.0)] - log.(Cs)[findfirst(x->x==xstart, -20.0:0.1:5.0)])/(xend - xstart) .+ log.(Cs)[findfirst(x->x==0.0, -20.0:0.1:5.0)] .- 0.5,
-	label=false,
-	lc=:orange,
+	range(xstart,xend; length=100) .* dim .+ log.(Cs)[findfirst(x->x==0.0, -20.0:0.1:5.0)] .- 0.5,
+	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$",
+	lc=:purple,
 	lw=2
-)
-scatter!(
-	[log(exp(-3))], 
-	[log(Cs[findfirst(x->x==-3, -20.0:0.1:5.0)])], 
-	mc=:red, 
-	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$"
 )
 savefig("plots/exercise5_7_lo.png")
 
@@ -139,17 +122,12 @@ plot(
 )
 
 xstart, xend = -3.0, -0.5
+dim = (log.(Cs)[findfirst(x->x==xend, -20.0:0.01:1.0)] - log.(Cs)[findfirst(x->x==xstart, -20.0:0.01:1.0)])/(xend - xstart)
 plot!(
 	range(xstart,xend; length=100),
-	range(xstart,xend; length=100) .* (log.(Cs)[findfirst(x->x==xend, -20.0:0.01:1.0)] - log.(Cs)[findfirst(x->x==xstart, -20.0:0.01:1.0)])/(xend - xstart) .+ log.(Cs)[findfirst(x->x==0.0, -20.0:0.01:1.0)] .- 0.25,
-	label=false,
-	lc=:orange,
+	range(xstart,xend; length=100) .* dim .+ log.(Cs)[findfirst(x->x==0.0, -20.0:0.01:1.0)] .- 0.25,
+	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$",
+	lc=:purple,
 	lw=2
-)
-scatter!(
-	[log(exp(-1))], 
-	[log(Cs[findfirst(x->x==-1, -20.0:0.01:1.0)])], 
-	mc=:red, 
-	label="\$Δ^{(C)} ≈ $(round(dim; digits=2))\$"
 )
 savefig("plots/exercise5_7_hh.png")

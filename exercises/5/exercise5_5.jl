@@ -33,7 +33,7 @@ end
 probs = abs2.(fft(traj .- mean(traj))) 
 probs ./= sum(probs)
 
-printstyled("Chaotic timeseries spectral entropy: "; color=:light_magenta)
+printstyled("Chaotic  timeseries spectral entropy: "; color=:light_magenta)
 printstyled("$(round(H(probs); digits=4))\n"; color=:light_cyan)
 
 # Noise timeseries
@@ -42,5 +42,9 @@ traj = rand(1000)
 probs = abs2.(fft(traj .- mean(traj))) 
 probs ./= sum(probs)
 
-printstyled("Pure noise spectral entropy: "; color=:light_magenta)
+printstyled("Pure noise          spectral entropy: "; color=:light_magenta)
 printstyled("$(round(H(probs); digits=4))\n"; color=:light_cyan)
+
+# Theoretical maximum entropy
+printstyled("Theoretical maximum spectral entropy: "; color=:light_magenta)
+printstyled("$(round(log(1000); digits=4))\n"; color=:light_cyan)

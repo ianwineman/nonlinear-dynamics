@@ -46,7 +46,7 @@ p1 = plot(
 	lc=[:red :orange :blue]
 )
 
-τs = [55, 28, 8] # from p1
+τs = [55, 28, 10] # from p1
 embs = [delay_embed(Xs[i], τs[i], 3) for i in 1:length(Xs)]
 
 plots = [p1]

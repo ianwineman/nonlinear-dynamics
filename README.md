@@ -1,6 +1,11 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Exercise 6.3
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/6/exercise6_3.jl)
+
+![Exercise 6.3](plots/exercise6_3.png)
+
 ## Gingerbread man
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/6/gingerbreadman.jl)
 

@@ -20,13 +20,6 @@ function lyapunov_from_data(R, k, δt)
 	M = length(R) - k
 	ξs = zeros(k)
 
-	#=
-	Ζ = [(i,nearest_neighbor(R[i],R)) for i in 1:M] |> 
-		x -> map(y -> [y .+ (i,i) for i=0:k-1], x) |> 
-		stack |>
-		x -> map(y -> norm(R[y[1]] - R[y[2]]), x)
-	=#
-	# nearest_neighbor(R[i],R) changed to nearest_neighbor(R[i],R[1:M])
 	Ζ = [(i,nearest_neighbor(R[i],R[1:M])) for i in 1:M] |>
 		x -> map(y -> [y .+ (i,i) for i=0:k-1], x) |> 
 		stack |>

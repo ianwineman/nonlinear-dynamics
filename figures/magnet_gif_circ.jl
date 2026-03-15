@@ -194,7 +194,7 @@ function closest_magnet(x, y; m1=(1.0, 0.0))
 	return argmin(δ)
 end
 
-function generate_image(size, theme; m1=(1.0, 0.0), warn=false)
+function generate_image(size, theme; m1=(1.0, 0.0))
 	tspan = (0.0, 100.0)
 	p = [1.0, 0.2, 1.0, 0.3]
 	img = zeros(RGB{Float64}, size...)
@@ -212,16 +212,16 @@ function generate_image(size, theme; m1=(1.0, 0.0), warn=false)
 	return img
 end
 
-function generate_gif(size, theme; warn=false)
+function generate_gif(size, theme; r=2)
 	θs = range(0, 2π; length=100)
 	imgs = []
 	@showprogress for θ in θs
-		m1 = sqrt(2) * cos(θ) - (sqrt(2) - 1), sqrt(2) * sin(θ)
-		img = generate_image(size, theme; m1=m1, warn=warn)
+		m1 = sqrt(r) * cos(θ) - (sqrt(r) - 1), sqrt(r) * sin(θ)
+		img = generate_image(size, theme; m1=m1)
 		push!(imgs, img)
 	end
-	save("plots/mp/mp_circ_basins_$(size[1])x$(size[2])_$(string(theme)).gif", cat(imgs..., dims=3); fps=10)
-	println("plots/mp/mp_circ_basins_$(size[1])x$(size[2])_$(string(theme)).gif")
+	save("plots/mp/mp_circ_basins_$(size[1])x$(size[2])_$(string(theme))_r$r.gif", cat(imgs..., dims=3); fps=10)
+	println("plots/mp/mp_circ_basins_$(size[1])x$(size[2])_$(string(theme))_r$r.gif")
 end
 
-generate_gif((1_000, 1_000), :BrBG_3)
+generate_gif((1_000, 1_000), :lajolla; r=3)

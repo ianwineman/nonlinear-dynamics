@@ -3,6 +3,7 @@ using Statistics, Random
 using Plots
 using FFTW
 using LinearAlgebra
+using DynamicalSystems
 
 function rössler!(du, u, p, t)
 	a, b, c = p
@@ -54,7 +55,16 @@ end
 
 function takensbestestimator(X, ϵmax)
 	η  = 0
-	ij = [] # TODO
+	ij = [] # TODO ∀ i,j st. i < j && norm(X[i] - X[j]) < ϵmax
+
+	for j in 1:length(X)
+		for i in 1:(j-1)
+			if norm(X[i] - X[j]) < ϵmax
+				push!(ij, (i, j))
+			end
+		end
+	end
+
 	N = length(ij)
 
 	for (i, j) in ij
@@ -64,3 +74,24 @@ function takensbestestimator(X, ϵmax)
 	η /= N
 	return -1 / η
 end
+
+function delayembed(w::Vector{Float64}, τ::Int, d::Int)
+	L = length(w) - (d-1)*τ
+	masks = [[i + j*τ for j in 0:(d-1)] for i in 1:L]
+	return [w[m] for m in masks]
+end
+
+#ee = 10 .^ (-5.0:0.1:1.0)
+#CC = correlationsum(X, ee)
+#plot(log.(ee), log.(CC))
+X_ϵmax = 3.1622776601683795
+
+#ee = 10 .^ (-5.0:0.1:1.0)
+#CC = correlationsum(S, ee)
+#plot(log.(ee), log.(CC))
+S_ϵmax = 3.1622776601683795
+
+CX = takensbestestimator(delayembed(X, 3, 15), X_ϵmax)
+CS = takensbestestimator(delayembed(S, 4, 17), S_ϵmax)
+
+CX, CS

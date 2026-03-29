@@ -1,9 +1,10 @@
 using DifferentialEquations
 using Statistics, Random
-using Plots
+using Plots, StatsPlots
 using FFTW
 using LinearAlgebra
 using DynamicalSystems
+using ProgressMeter
 
 function rössler!(du, u, p, t)
 	a, b, c = p
@@ -22,7 +23,7 @@ X ./= std(X)
 X .+= randn(length(X)) * std(X) * 0.1
 X .+= 2 # for plotting (per Fig. 7.5 code)
 
-p1 = plot(1:1_000, X[1:1_000], xlim=[0, 1_000], label="Rössler")
+p1 = plot(1:1_000, X[1:1_000], xlim=[0, 1_000], label="Rössler", lc=RGB(159/255, 178/255, 97/255), xlabel="\$ t\$")
 
 Random.seed!(77163)
 rng = Random.MersenneTwister(77163)
@@ -35,7 +36,7 @@ end
 S ./= std(S)
 S .-= 2 # for plotting (per Fig. 7.5 code)
 
-plot!(1:1_000, S[1:1_000], label="ARMA")
+plot!(1:1_000, S[1:1_000], label="ARMA", lc=RGB(96/255, 77/255, 158/255))
 
 function surrogate(X; alg=:FT)
 	if alg == :FT
@@ -94,4 +95,43 @@ S_ϵmax = 3.1622776601683795
 CX = takensbestestimator(delayembed(X, 3, 15), X_ϵmax)
 CS = takensbestestimator(delayembed(S, 4, 17), S_ϵmax)
 
-CX, CS
+box_Xft, box_Xaaft, box_Sft, box_Saaft = [], [], [], []
+@showprogress for i in 1:100
+	Xft = delayembed(surrogate(X[1:1_000]), 3, 15)
+	Xaaft = delayembed(surrogate(X[1:1_000]; alg=:AAFT), 3, 15)
+	Sft = delayembed(surrogate(S[1:1_000]), 4, 17)
+	Saaft = delayembed(surrogate(S[1:1_000]; alg=:AAFT), 4, 17)
+
+	push!(box_Xft, takensbestestimator(Xft, X_ϵmax))
+	push!(box_Xaaft, takensbestestimator(Xaaft, X_ϵmax))
+	push!(box_Sft, takensbestestimator(Sft, 0.25))
+	push!(box_Saaft, takensbestestimator(Saaft, 0.25))
+end
+
+p2 = boxplot(
+	box_Xft,
+	label="FT",
+	title="Rössler",
+	xtick=false,
+	ylabel="\$ Δ^{(T)}\$",
+	c=:red;
+	outliers=false
+)
+boxplot!(box_Xaaft, label="AAFT", c=:orange; outliers=false)
+hline!([CX], lw=1, lc=:blue, ls=:dash, label=false)
+
+p3 = boxplot(
+	box_Sft,
+	label="FT",
+	title="ARMA",
+	xtick=false,
+	ylabel="\$ Δ^{(T)}\$",
+	c=:red;
+	outliers=false
+)
+boxplot!(box_Saaft, label="AAFT", c=:orange; outliers=false)
+hline!([CS], lw=1, lc=:blue, ls=:dash, label=false)
+
+plot(p1, p2, p3, layout=@layout[a{0.5w} b{0.25w} c{0.25w}], size=(800, 400))
+
+

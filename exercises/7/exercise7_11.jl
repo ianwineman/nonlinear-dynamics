@@ -3,7 +3,6 @@ using Statistics, Random
 using Plots, StatsPlots
 using FFTW
 using LinearAlgebra
-using DynamicalSystems
 using ProgressMeter
 
 function rössler!(du, u, p, t)
@@ -40,13 +39,9 @@ plot!(1:1_000, S[1:1_000], label="ARMA", lc=RGB(96/255, 77/255, 158/255))
 
 function surrogate(X; alg=:FT)
 	if alg == :FT
-		S = rfft(X)
-		shuffle!(S)
-		return irfft(S, length(X))
+		irfft(rfft(X) .* [exp(im * 2π * rand(Float64)) for _ in 1:length(rfft(X))], length(X))
 	elseif alg == :AAFT
-		S = rfft(X)
-		shuffle!(S)
-		S = irfft(S, length(X))
+		S = irfft(rfft(X) .* [exp(im * 2π * rand(Float64)) for _ in 1:length(rfft(X))], length(X))
 		S[sortperm(S)] .= sort(X)
 		return S
 	else
@@ -104,8 +99,8 @@ box_Xft, box_Xaaft, box_Sft, box_Saaft = [], [], [], []
 
 	push!(box_Xft, takensbestestimator(Xft, X_ϵmax))
 	push!(box_Xaaft, takensbestestimator(Xaaft, X_ϵmax))
-	push!(box_Sft, takensbestestimator(Sft, 0.25))
-	push!(box_Saaft, takensbestestimator(Saaft, 0.25))
+	push!(box_Sft, takensbestestimator(Sft, S_ϵmax))
+	push!(box_Saaft, takensbestestimator(Saaft, S_ϵmax))
 end
 
 p2 = boxplot(
@@ -133,5 +128,4 @@ boxplot!(box_Saaft, label="AAFT", c=:orange; outliers=false)
 hline!([CS], lw=1, lc=:blue, ls=:dash, label=false)
 
 plot(p1, p2, p3, layout=@layout[a{0.5w} b{0.25w} c{0.25w}], size=(800, 400))
-
-
+savefig("plots/exercise7_11.png")

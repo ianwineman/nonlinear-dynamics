@@ -48,9 +48,10 @@ solv = solve(prob)
 #plot(solv, idxs=(1,2,3))
 
 function ragwitz_criterion(x, i)
-	mean_NRMSEs = zeros(length(4:10), length(1:20))
+	ncs = zeros(length(4:10), length(1:20))
 	for d in 4:10
 		for τ in 1:20
+			println((d, τ))
 			h = getindex.(x, i) 
 			R = delay_embed(h, τ, d)
 
@@ -68,10 +69,10 @@ function ragwitz_criterion(x, i)
 			for j in 1:100
 				NRMSEs[j] = NRMSE(ground_truth[j], prediction[j], mean(ground_truth))
 			end
-			mean_NRMSEs[d - 3, τ] = mean(NRMSEs)
+			ncs[d - 3, τ] = findfirst(>=(0.5), NRMSEs)
 		end
 	end
-	return mean_NRMSEs
+	return ncs
 end
 
 mn = ragwitz_criterion(solv.u, 1)
@@ -79,9 +80,12 @@ p1 = heatmap(
 	mn, 
 	xlabel="\$ τ\$", 
 	ylabel="\$ d\$", 
-	colorbar_title="\nMean NRMSE", 
-	ytick=(1:7, 4:10), margin=5mm,
-	title="\nLorenz96 \$ x_1\$"
+	colorbar_title="\$ n_c\$",
+	xtick=1:2:20,
+	ytick=(1:7, 4:10), 
+	margin=5mm,
+	title="\nLorenz96 \$ x_1\$",
+	c=:lipari
 )
 
 mn = ragwitz_criterion(solv.u, 2)
@@ -89,9 +93,12 @@ p2 = heatmap(
 	mn, 
 	xlabel="\$ τ\$", 
 	ylabel="\$ d\$", 
-	colorbar_title="\nMean NRMSE", 
-	ytick=(1:7, 4:10), margin=5mm,
-	title="\nLorenz96 \$ x_2\$"
+	colorbar_title="\$ n_c\$",
+	xtick=1:2:20,
+	ytick=(1:7, 4:10), 
+	margin=5mm,
+	title="\nLorenz96 \$ x_2\$",
+	c=:lipari
 )
 
 mn = ragwitz_criterion(solv.u, 3)
@@ -99,12 +106,13 @@ p3 = heatmap(
 	mn, 
 	xlabel="\$ τ\$", 
 	ylabel="\$ d\$", 
-	colorbar_title="\nMean NRMSE", 
-	ytick=(1:7, 4:10), margin=5mm,
-	title="\nLorenz96 \$ x_3\$"
+	colorbar_title="\$ n_c\$",
+	xtick=1:2:20,
+	ytick=(1:7, 4:10), 
+	margin=5mm,
+	title="\nLorenz96 \$ x_3\$",
+	c=:lipari
 )
 
 plot(p1, p2, p3, layout=(3, 1), size=(400, 800))
 savefig("plots/exercise7_13.png")
-
-# TODO use println("n_c = $(findfirst(>=(0.5), NRMSEs))") to use n_c not mean(NRMSEs) to rate pair of params

@@ -1,5 +1,5 @@
 using DifferentialEquations
-using Plots, Measures
+using Plots
 using Associations
 
 function coupledRössler!(du, u, p, t)
@@ -73,7 +73,7 @@ plot(
 	], 
 	size=(900, 600), 
 	plot_title="Coupled Rössler system", 
-	plot_titlefontsize=12, 
+	plot_titlefontsize=12 
 )
 savefig("plots/exercise7_15.png")
 

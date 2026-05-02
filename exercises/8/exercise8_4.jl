@@ -154,33 +154,48 @@ function nextcollision(
 	end
 end
 
+function billiardtrajectory(
+	B::Billiard, 
+	δBxy::Tuple{Float64, Float64}, 
+	unitdir::Tuple{Float64, Float64},
+	steps::Int64
+)
+	traj = [δBxy]
+	uds = [unitdir]
 
-xc = 2.0*cos.(0:0.01:2π)
-yc = 2.0*sin.(0:0.01:2π)
-plot(xc, yc, label=false, xlim=[-3,3], ylim=[-3,3], aspect_ratio=:equal)
+	for _ in 1:steps
+		t, newδBxy, newud = nextcollision(B, traj[end], uds[end])
+		push!(traj, newδBxy)
+		push!(uds, newud)
+	end
 
-b = Billiard(-3:3, -3:3, 2.0)
-
-traj = [(-3.0, 1.1)]
-ud = (1.0, 1.0) ./ norm((1.0, 1.0))
-
-for _ in 1:20
-	_, newxy, newud = nextcollision(b, traj[end], ud)
-	global ud = newud
-	push!(traj, newxy)
+	return traj
 end
 
-plot!(traj, label=false)
 
+# create circle
+xc = 1.5*cos.(0:0.01:2π)
+yc = 1.5*sin.(0:0.01:2π)
 
-dx, dy = rand()/100, rand()/100
-traj = [(-3.0 + dx, 1.1 + dy)]
+# create billiard
+b = Billiard(-3:3, -3:3, 1.5)
+
+u0 = (-3.0, 1.0)
 ud = (1.0, 1.0) ./ norm((1.0, 1.0))
+sN = 25
+t1 = billiardtrajectory(b, u0, ud, sN)
 
-for _ in 1:20
-	_, newxy, newud = nextcollision(b, traj[end], ud)
-	global ud = newud
-	push!(traj, newxy)
+#plot!(t1, label=false)
+
+trajectories = [billiardtrajectory(b, u0 .+ (rand()/100, rand()/100), ud, sN) for _ in 1:100]
+
+anim = @animate for i in 1:sN
+	# plot circle
+	plot(xc, yc, label=false, xlim=[-3,3], ylim=[-3,3], aspect_ratio=:equal, lc=:black)
+	
+	points = getindex.(trajectories, i)
+	scatter!(points, c=:blue, label=false)
+	scatter!(t1[i], c=:red, label=false)
+
 end
-
-plot!(traj, label=false)
+gif(anim, "plots/exercise8_4.gif", fps=1)

@@ -1,5 +1,6 @@
 using LinearAlgebra
 using Plots
+using Statistics
 
 struct Billiard
 	xrange::UnitRange{Int64}
@@ -37,7 +38,7 @@ function nextcollision(
 		Δ = (m^2 * b^2) - ((m^2 + 1) * (b^2 - r^2))
 
 		if x^2 + y^2 ≈ r^2 || Δ < 0 # collision with top
-			return t, (xx, top), (u, -v)
+			return t, (xx, top), (u, -v), false
 		else     # collision with circle
 			x1  = (-m*b + √Δ) / (m^2 + 1)
 			x2  = (-m*b - √Δ) / (m^2 + 1)
@@ -59,7 +60,7 @@ function nextcollision(
 			N = [xc, yc]
 			R = V - 2 * ((dot(N, V) / dot(N, N)) * N)
 			R /= norm(R)
-			return t, (xc, yc), R |> Tuple
+			return t, (xc, yc), R |> Tuple, true
 		end
 	elseif δi == 2
 		m = (bot - y) / (xx - x)
@@ -67,7 +68,7 @@ function nextcollision(
 		Δ = (m^2 * b^2) - ((m^2 + 1) * (b^2 - r^2))
 
 		if x^2 + y^2 ≈ r^2 || Δ < 0 # collision with bottom
-			return t, (xx, bot), (u, -v)
+			return t, (xx, bot), (u, -v), false
 		else     # collision with circle
 			x1  = (-m*b + √Δ) / (m^2 + 1)
 			x2  = (-m*b - √Δ) / (m^2 + 1)
@@ -89,7 +90,7 @@ function nextcollision(
 			N = [xc, yc]
 			R = V - 2 * ((dot(N, V) / dot(N, N)) * N)
 			R /= norm(R)
-			return t, (xc, yc), R |> Tuple
+			return t, (xc, yc), R |> Tuple, true
 		end
 	elseif δi == 3
 		m = (yy - y) / (left - x)
@@ -97,7 +98,7 @@ function nextcollision(
 		Δ = (m^2 * b^2) - ((m^2 + 1) * (b^2 - r^2))
 
 		if x^2 + y^2 ≈ r^2 || Δ < 0 # collision with left
-			return t, (left, yy), (-u, v)
+			return t, (left, yy), (-u, v), false
 		else     # collision with circle
 			x1  = (-m*b + √Δ) / (m^2 + 1)
 			x2  = (-m*b - √Δ) / (m^2 + 1)
@@ -119,7 +120,7 @@ function nextcollision(
 			N = [xc, yc]
 			R = V - 2 * ((dot(N, V) / dot(N, N)) * N)
 			R /= norm(R)
-			return t, (xc, yc), R |> Tuple
+			return t, (xc, yc), R |> Tuple, true
 		end
 	elseif δi == 4
 		m = (yy - y) / (right - x)
@@ -127,7 +128,7 @@ function nextcollision(
 		Δ = (m^2 * b^2) - ((m^2 + 1) * (b^2 - r^2))
 
 		if x^2 + y^2 ≈ r^2 || Δ < 0 # collision with right
-			return t, (right, yy), (-u, v)
+			return t, (right, yy), (-u, v), false
 		else     # collision with circle
 			x1  = (-m*b + √Δ) / (m^2 + 1)
 			x2  = (-m*b - √Δ) / (m^2 + 1)
@@ -149,7 +150,7 @@ function nextcollision(
 			N = [xc, yc]
 			R = V - 2 * ((dot(N, V) / dot(N, N)) * N)
 			R /= norm(R)
-			return t, (xc, yc), R |> Tuple
+			return t, (xc, yc), R |> Tuple, true
 		end
 	end
 end
@@ -162,17 +163,72 @@ function billiardtrajectory(
 )
 	traj = [δBxy]
 	uds = [unitdir]
+	circle_hits = Int64[]
 
-	for _ in 1:steps
-		t, newδBxy, newud = nextcollision(B, traj[end], uds[end])
+	for i in 1:steps
+		t, newδBxy, newud, circ_hit = nextcollision(B, traj[end], uds[end])
+
+		if circ_hit
+			push!(circle_hits, i)
+		end
+
 		push!(traj, newδBxy)
 		push!(uds, newud)
 	end
 
-	return traj
+	return traj, circle_hits
+end
+
+function gaps(v::Vector{Int64})
+	if length(v) == 0
+		return []
+	end
+	g = Vector{Int64}(undef, length(v)-1)
+	for i in 2:length(v)
+		g[i - 1] = v[i] - v[i-1]
+	end
+	return g
+end
+
+function randomu0ud(b::Billiard)
+	side = rand(1:4)
+	if side == 1     # top
+		x = (rand() * (last(b.xrange) - first(b.xrange))) - last(b.xrange)
+		y = last(b.yrange) |> Float64
+
+		θ = rand() * 2π
+		u = cos(θ)
+		v = -abs(sin(θ))
+	elseif side == 2 # right
+		x = last(b.xrange) |> Float64
+		y = (rand() * (last(b.yrange) - first(b.yrange))) - last(b.yrange)
+
+		θ = rand() * 2π
+		u = -abs(cos(θ))
+		v = sin(θ)
+	elseif side == 3 # bottom
+		x = (rand() * (last(b.xrange) - first(b.xrange))) - last(b.xrange)
+		y = first(b.yrange) |> Float64
+
+		θ = rand() * 2π
+		u = cos(θ)
+		v = abs(sin(θ))
+	else             # left
+		x = first(b.xrange) |> Float64
+		y = (rand() * (last(b.yrange) - first(b.yrange))) - last(b.yrange)
+
+		θ = rand() * 2π
+		u = abs(cos(θ))
+		v = sin(θ)
+	end
+
+	u0 = (x, y)
+	ud = (u, v)
+	return u0, ud
 end
 
 
+#=
 # create circle
 xc = 1.5*cos.(0:0.01:2π)
 yc = 1.5*sin.(0:0.01:2π)
@@ -185,8 +241,6 @@ ud = (1.0, 1.0) ./ norm((1.0, 1.0))
 sN = 25
 t1 = billiardtrajectory(b, u0, ud, sN)
 
-#plot!(t1, label=false)
-
 trajectories = [billiardtrajectory(b, u0 .+ (rand()/100, rand()/100), ud, sN) for _ in 1:100]
 
 anim = @animate for i in 1:sN
@@ -198,4 +252,44 @@ anim = @animate for i in 1:sN
 	scatter!(t1[i], c=:red, label=false)
 
 end
-gif(anim, "plots/exercise8_4.gif", fps=1)
+gif(anim, "plots/exercise8_4.gif", fps=5)
+=#
+
+nBs = []
+rs = range(0.5, 2.5; length=100)
+samples = 100
+sample_length = 1000
+
+for r in rs
+	b = Billiard(-3:3, -3:3, r)
+
+	allgaps = []
+	for i in 1:samples
+		u0, ud = randomu0ud(b)
+		tr, ch = billiardtrajectory(b, u0, ud, sample_length)
+		push!(allgaps, gaps(ch)...)
+	end
+
+	nB = allgaps |> mean
+	push!(nBs, nB)
+end
+
+plot(
+	rs, 
+	1 .+ (12 ./ (rs .* π)), 
+	ls=:dash,
+	lc=:black, 
+	label="Theoretical (Kac's Lemma)",
+	xlabel="\$ r\$",
+	ylabel="Mean return",
+	title="Sinai Billiard"
+)
+scatter!(
+	rs, 
+	nBs, 
+	label="Observed ($sample_length collisions)", 
+	mc=:indianred, 
+	msw=0,
+	ms=2
+)
+savefig("plots/exercise8_4.png")

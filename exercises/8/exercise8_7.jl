@@ -1,4 +1,4 @@
-using Plots
+using Plots, Statistics
 
 function henon(u; p=[1.4, 0.3])
 	x, y = u

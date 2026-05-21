@@ -164,6 +164,7 @@ function billiardtrajectory(
 	traj = [δBxy]
 	uds = [unitdir]
 	circle_hits = Int64[]
+	ts = []
 
 	for i in 1:steps
 		t, newδBxy, newud, circ_hit = nextcollision(B, traj[end], uds[end])
@@ -172,11 +173,12 @@ function billiardtrajectory(
 			push!(circle_hits, i)
 		end
 
+		push!(ts, t)
 		push!(traj, newδBxy)
 		push!(uds, newud)
 	end
 
-	return traj, circle_hits
+	return traj, circle_hits, ts
 end
 
 function gaps(v::Vector{Int64})
@@ -227,27 +229,44 @@ function randomu0ud(b::Billiard)
 	return u0, ud
 end
 
-function billiardtrajectoryuntilrecurrence(
-	B::Billiard, 
-	δBxy::Tuple{Float64, Float64}, 
-	unitdir::Tuple{Float64, Float64},
-	ϵ::Float64
-)
-	u0 = δBxy
-	traj = [δBxy]
-	uds = [unitdir]
-
-	while true
-		t, newδBxy, newud, _ = nextcollision(B, traj[end], uds[end])
-
-		push!(traj, newδBxy)
-		push!(uds, newud)
-
-		if norm(newδBxy .- δBxy) <= ϵ
-			return traj
+function recurrencematrix(traj, ϵ)
+	R = zeros(Int, length(traj), length(traj))
+	for i in 1:length(traj)
+		for j in 1:length(traj)
+			if i != j && norm(traj[i] .- traj[j]) < ϵ
+				R[i, j] = 1
+			end
 		end
 	end
+	return R
 end
+
+function diagonal(A, i)
+	[A[size(A)[1] - a, i + a + 1] for a in 0:(size(A)[1] - i - 1)]
+end
+
+function diagonallengths(R)
+	diagonal_lengths = []
+	for i in 1:(size(R)[1] - 1)
+		full_diagonal = diagonal(R, i)
+		if sum(full_diagonal) >= 2
+			current_diagonal_length = 0
+
+			for j in 1:length(full_diagonal)
+				if full_diagonal[j] == 1
+					current_diagonal_length += 1
+				else
+					if current_diagonal_length > 0
+						push!(diagonal_lengths, current_diagonal_length)
+						current_diagonal_length = 0
+					end
+				end
+			end
+		end
+	end
+	return filter(>(1), diagonal_lengths)
+end
+
 
 #=
 b = Billiard(-3:3, -3:3, π/2)
@@ -274,26 +293,43 @@ plot(
 savefig("plots/ergodic_billiard.png")
 =#
 
+
 ϵs = [0.001, 0.01, 0.1]
 rs = [1.0, 1.5, 2.0]
 sample_size = 100
 mean_recurrence_times = zeros(length(ϵs), length(rs))
 entropy_recurrence_times = zeros(length(ϵs), length(rs))
+mean_dlls = zeros(length(ϵs), length(rs))
+trajectory_length = 10_000
 
 for (i, ϵ) in enumerate(ϵs)
 	for (j, r) in enumerate(rs)
 		b = Billiard(-3:3, -3:3, r)
 		reccurrence_times = []
+		reccurrence_probs = []
+		dlls = []
 
 		for s in 1:sample_size
 			u0, ud = randomu0ud(b)
-			tr = billiardtrajectoryuntilrecurrence(b, u0, ud, ϵ)
-			push!(reccurrence_times, length(tr))
+			tr, _, _ = billiardtrajectory(b, u0, ud, trajectory_length)
+
+			recurrence_time = findfirst(x -> norm(x .- tr[1]) < ϵ, tr[2:end])
+			recurrence_prob = length(findall(x -> norm(x .- tr[1]) < ϵ, tr[2:end])) / trajectory_length
+
+			if !isnothing(recurrence_time)
+				push!(reccurrence_times, recurrence_time)
+			end
+			if recurrence_prob > 0.0
+				push!(reccurrence_probs, recurrence_prob)
+			end
+
+			push!(dlls, diagonallengths(recurrencematrix(tr, ϵ))...)
 		end
 
 		mean_recurrence_times[i, j] = mean(reccurrence_times)
-		entropy_recurrence_times[i, j] = entropy(reccurrence_times)
-		println("(ϵ, r) = ($ϵ, $r) MRT: $(mean(reccurrence_times)) ERT: $(entropy(reccurrence_times))")
+		entropy_recurrence_times[i, j] = -log2(mean(reccurrence_probs)) + 1 # https://www.pik-potsdam.de/members/kurths/publikationen/2009/phys-lett-a-murilo.pdf
+		mean_dlls[i, j] = mean(dlls)
+		println("(ϵ, r) = ($ϵ, $r) MRT: $(mean(reccurrence_times)) ERT: $(-log2(mean(reccurrence_probs)) + 1) MDLL: $(mean(dlls))")
 	end
 end
 
@@ -308,12 +344,10 @@ p1 = heatmap(
 	c=:devon,
 	yscale=:log10,
 	cbar_title="\n\$ ⟨r⟩\$, Mean reccurence time \$ (n = $sample_size) \$",
+	leftmargin=5Plots.mm,
 	rightmargin=5Plots.mm
 )
 
-
-# do 10_000 step trajectory and x/10_000 = p (probability to use in entropy calculation) where x is the number of steps in traj
-#     reccurence threshold
 p2 = heatmap(
 	rs,
 	ϵs,
@@ -325,7 +359,34 @@ p2 = heatmap(
 	c=:devon,
 	yscale=:log10,
 	cbar_title="\n\$ H_r\$, Entropy of reccurence times \$ (n = $sample_size) \$",
+	leftmargin=5Plots.mm,
 	rightmargin=5Plots.mm
 )
 
-plot(p1)
+p3 = heatmap(
+	rs,
+	ϵs,
+	mean_dlls,
+	xlabel="\$ R\$, Disk radius",
+	ylabel="\$ ϵ\$, Recurrence threshold",
+	xtick=rs,
+	ytick=ϵs,
+	c=:devon,
+	yscale=:log10,
+	cbar_title="\n\$ ⟨ℓ⟩\$, Mean diagonal line length \$ (n = $sample_size) \$",
+	leftmargin=5Plots.mm,
+	rightmargin=5Plots.mm
+)
+
+plot(p1, p2, p3, layout=(2, 2), size=(1200, 800))
+savefig("plots/exercise8_10.png")
+
+#=
+b = Billiard(-3:3, -3:3, 2.5)
+u0, ud = randomu0ud(b)
+traj, _, _ = billiardtrajectory(b, u0, ud, 10000)
+R = recurrencematrix(traj, 0.1)
+heatmap(R, c=:devon)
+
+diagonallengths(R) |> mean
+=#

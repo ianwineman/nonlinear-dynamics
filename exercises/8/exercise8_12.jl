@@ -19,7 +19,7 @@ end
 df = CSV.read("book/exercise_data/16.csv", DataFrame; header=false, delim=" ", ignorerepeated=true)
 
 ϵs = range(0.1, 0.2; length=20)
-n = 500
+n = 2_000
 
 dlxs = []
 dlys = []

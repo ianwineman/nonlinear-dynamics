@@ -1,6 +1,13 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Exercise 8.14
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/8/14.jl)
+
+```julia
+@assert nonchaotic == [1 for _ in 1:length(u0s)]
+```
+
 ## Exercise 8.13
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/8/exercise8_13.jl)
 

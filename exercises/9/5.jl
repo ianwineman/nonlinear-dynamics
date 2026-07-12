@@ -18,7 +18,7 @@ T = 5.21
 tmax = 100.0
 
 prob = ODEProblem(duffing!, [1.0, 0.0, 0.0], (0.0, tmax), [19.75, 0.1, 2π/T])
-solv = solve(prob)
+solv = solve(prob, Vern9(), reltol=1e-9, abstol=1e-9, maxiters=10e7)
 
 
 p1 = plot(
@@ -31,7 +31,7 @@ p1 = plot(
 tmax = 10_000.0
 
 prob = ODEProblem(duffing!, [1.0, 0.0, 0.0], (0.0, tmax), [19.75, 0.1, 2π/T])
-solv = solve(prob)
+solv = solve(prob, Vern9())
 
 pm = []
 for n in 0:((tmax ÷ T) - 1 |> Int)
@@ -41,8 +41,8 @@ for n in 0:((tmax ÷ T) - 1 |> Int)
 end
 
 p2 = scatter(
-	first.(pm), 
-	last.(pm), 
+	first.(pm)[10:end], 
+	last.(pm)[10:end], 
 	msw=0, 
 	ms=1,
 	label=false,
@@ -53,7 +53,7 @@ p2 = scatter(
 tmax = 1_000.0
 
 prob = ODEProblem(duffing!, [1.0, 0.0, 0.0], (0.0, tmax), [19.75, 0.1, 2π/T])
-solv = solve(prob)
+solv = solve(prob, Vern9(), reltol=1e-9, abstol=1e-9, maxiters=10e7)
 
 pm = []
 for n in 0:((tmax ÷ T) - 1 |> Int)

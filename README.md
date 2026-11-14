@@ -1,6 +1,11 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Brusselator
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/brusselator.jl)
+
+![brusselator](figures/brusselator.gif)
+
 ## Exercise 10.11
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/10/11.jl)
 

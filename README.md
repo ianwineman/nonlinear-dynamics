@@ -1,6 +1,11 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Exercise 11.3
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/exercises/11/3.jl)
+
+![Exercise 11.3](plots/11.3.png)
+
 ## Fitzhugh-Nagumo
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/fitz.jl)
 

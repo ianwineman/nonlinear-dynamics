@@ -1,6 +1,12 @@
 # Nonlinear Dynamics
 [A Concise Introduction Interlaced with Code](https://link.springer.com/book/10.1007/978-3-030-91032-7)
 
+## Fitzhugh-Nagumo
+[Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/fitz.jl)
+
+![brusselator](figures/fitzB.mp4)
+![brusselator](figures/fitzA.mp4)
+
 ## Brusselator
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/brusselator.jl)
 

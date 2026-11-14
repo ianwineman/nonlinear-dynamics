@@ -2,6 +2,7 @@ using DifferentialEquations
 using LinearSolve, SparseArrays
 using SparseConnectivityTracer, ADTypes
 using Random
+using Plots
 
 function brusselator!(du, u, p, t)
 	a, b, d, L, M  = p

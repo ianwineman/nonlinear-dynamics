@@ -26,7 +26,7 @@ p = (a, b, d, L, M)
 
 Random.seed!(4321)
 u0 = rand(M, M, 2)
-tspan = (0.0, 1000.0)
+tspan = (0.0, 3000.0)
 
 detector = TracerSparsityDetector()
 du0 = similar(u0)
@@ -38,7 +38,8 @@ f = ODEFunction(brusselator!; jac_prototype=float.(jac_sparsity))
 prob_sparse = ODEProblem(f, u0, tspan, p)
 
 alg = FBDF(linsolve=KLUFactorization())
-solv = solve(prob_sparse, alg)
+stats = @timed solve(prob_sparse, alg)
+solv = stats.value
 
 es = [extrema(solv.u[i][:, :, 1] .- solv.u[i][:, :, 2]) for i in 1:length(solv.u)]
 cmin = minimum(first.([extrema(solv.u[i][:, :, 1] .- solv.u[i][:, :, 2]) for i in 1:length(solv.u)]))
@@ -60,4 +61,5 @@ anim = @animate for (i, t) in enumerate(solv.t)
    	)
 end
 
+println(stats.time)
 gif(anim, "figures/brusselator.gif", fps=30)

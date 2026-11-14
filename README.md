@@ -4,8 +4,8 @@
 ## Fitzhugh-Nagumo
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/fitz.jl)
 
-![brusselator](figures/fitzB.mp4)
-![brusselator](figures/fitzA.mp4)
+https://github.com/user-attachments/assets/88fe008f-d944-4306-bb43-e49b76ef724f
+https://github.com/user-attachments/assets/59ce88a4-299a-4e39-abfa-f3e9de8fa284
 
 ## Brusselator
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/brusselator.jl)

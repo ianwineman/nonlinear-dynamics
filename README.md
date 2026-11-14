@@ -6,6 +6,8 @@
 
 ![Exercise 11.3](plots/11.3.png)
 
+https://github.com/user-attachments/assets/26bd1b0e-6e76-4e5a-8e97-99916c11f94f
+
 ## Fitzhugh-Nagumo
 [Code](https://github.com/ianwineman/nonlinear-dynamics/blob/main/figures/fitz.jl)
 

@@ -57,7 +57,7 @@ cmin = minimum(first.(es))
 cmax = maximum(last.(es))
 
 x1 = [((m1 - 1) * L)/(M - 1) for m1 in 1:M]
-x2 = [((m2 - 1) * L)/(M - 1) for m2 in 1:M]
+x2 = x1
 
 p1 = heatmap(
 	x1, 
@@ -100,6 +100,9 @@ wσ =  std(w)
 
 α = atan.((w .- wμ) ./ wσ, (u .- uμ) ./ uσ)
 
+du = similar(solv.u[end])
+fitzhughnagumo!(du, solv.u[end], p, solv.t[end])
+
 p3 = heatmap(
 	x1, 
 	x2, 
@@ -109,16 +112,20 @@ p3 = heatmap(
    	ylabel="\$ x_2\$", 
    	colorbar_title="\$ α\$",
 )
+contour!(x1, x2, [du[x, y, 1] for x in 1:M for y in 1:M], lc=:black, lw=2, colorbar_entry=false, levels=[0.0])
+contour!(x1, x2, [du[x, y, 2] for x in 1:M for y in 1:M], lc=:white, lw=2, colorbar_entry=false, levels=[0.0])
 
 p4 = heatmap(
 	x2[75:100], 
-	x1[120:145], 
+	x1[120:145],
 	α[120:145, 75:100], 
 	c=:lightrainbow,
 	xlabel="\$ x_1\$", 
    	ylabel="\$ x_2\$", 
    	colorbar_title="\$ α\$",
 )
+contour!(x2[75:100], x1[120:145], du[120:145, 75:100, 1], lc=:black, lw=2, colorbar_entry=false, levels=[0.0])
+contour!(x2[75:100], x1[120:145], du[120:145, 75:100, 2], lc=:white, lw=2, colorbar_entry=false, levels=[0.0])
 
 plot(p1, p2, p3, p4)
 savefig("plots/11.3.png")
